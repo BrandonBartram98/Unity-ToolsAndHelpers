@@ -1,2 +1,2 @@
 # UnityHelperFunctions
-Useful functions I use across Unity projects
+Useful functions to use across all Unity projects.
