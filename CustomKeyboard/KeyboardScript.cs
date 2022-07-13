@@ -5,11 +5,10 @@ using TMPro;
 
 public class KeyboardScript : MonoBehaviour
 {
+    [SerializeField] TMP_InputField TextField;
+    [SerializeField] GameObject lowercaseKb, uppercaseKb, symbolKb;
 
-    public TMP_InputField TextField;
-    public GameObject EngLayoutSml, EngLayoutBig, SymbLayout;
-
-    public void alphabetFunction(string alphabet)
+    public void AlphabetFunction(string alphabet)
     {
         if (TextField.text.Length < TextField.characterLimit)
         {
@@ -17,9 +16,14 @@ public class KeyboardScript : MonoBehaviour
         }
     }
 
+    public void ClearAll()
+    {
+        TextField.text = "";
+    }
+
     public void BackSpace()
     {
-        if (TextField.text.Length>0)
+        if (TextField.text.Length > 0)
         {
             TextField.text = TextField.text.Remove(TextField.text.Length - 1);
         }
@@ -27,9 +31,9 @@ public class KeyboardScript : MonoBehaviour
 
     public void CloseAllLayouts()
     {
-        EngLayoutSml.SetActive(false);
-        EngLayoutBig.SetActive(false);
-        SymbLayout.SetActive(false);
+        lowercaseKb.SetActive(false);
+        uppercaseKb.SetActive(false);
+        symbolKb.SetActive(false);
     }
 
     public void ShowLayout(GameObject SetLayout)
