@@ -8,3 +8,5 @@ Useful tools to use across all Unity projects.
 * A prefab + scripts for a Onscreen or VR/AR keyboard.
 ### LatLong
 * Scripts for converting latitude + longitudes into Unity meters and getting bearings between them.
+### VR
+* Useful VR scripts.
