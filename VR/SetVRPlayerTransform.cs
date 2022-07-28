@@ -12,6 +12,7 @@ public class NewBehaviourScript : MonoBehaviour
     [Header("Transforms")]
     [SerializeField] private Transform _desiredTransform;
 
+    // Set the player position and rotation, useful to force rotation after loading scene
     public void SetPlayerPositionAndRotation()
     {
         Vector3 newPos = new Vector3(_desiredTransform.position.x, _xrRig.position.y, _desiredTransform.position.z);
