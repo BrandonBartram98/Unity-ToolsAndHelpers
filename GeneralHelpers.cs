@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public static class MyHelpers
+public static class GeneralHelpers
 {
     // Camera Reference:
     // Store reference to camera so its only called once
