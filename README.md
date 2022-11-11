@@ -1,6 +1,11 @@
 # 🔧 Unity Tools and Helpers
 Useful tools and handy functions to use for Unity projects.
 
+### :hammer: Get Started
+
+- `git clone https://github.com/BrandonBartram98/Unity-ToolsAndHelpers` - Clone project
+- Import scripts into Unity project
+
 ## Helpers/Extensions
 ### General Helpers
 Useful functions for optimization and some that are just reguarly used.
@@ -64,12 +69,34 @@ public float GetDistance(float lat1, float lon1, float lat2, float lon2)
 ### VR
 Useful Virtual Reality scripts.
 
+#### Force Player Rig Rotation
+```c#
+[Header("XR Rig")]
+[SerializeField] private Transform _xrRig;
+[SerializeField] private Transform _rigOffset;
+[SerializeField] private Transform _rigCamera;
+
+[Header("Transforms")]
+[SerializeField] private Transform _desiredTransform;
+
+// Set the player position and rotation, useful to force rotation after loading scene
+public void SetPlayerPositionAndRotation()
+{
+    Vector3 newPos = new Vector3(_desiredTransform.position.x, _xrRig.position.y, _desiredTransform.position.z);
+
+    _xrRig.SetPositionAndRotation(newPos, _desiredTransform.rotation);
+
+    _rigOffset.localRotation = Quaternion.identity;
+    _rigOffset.localRotation = Quaternion.Inverse(Quaternion.Euler(0, _rigCamera.eulerAngles.y, 0)) * _xrRig.rotation;
+}
+```
+
 ## Prefabs/Plugins
 
 ### Custom Keyboard
 A prefab + scripts for a Onscreen or VR/AR keyboard.
 
-### :ghost: Try it Out or Contribute
+## :ghost: Contribute
 
 ```bash
 git clone https://github.com/BrandonBartram98/Unity-ToolsAndHelpers
