@@ -18,17 +18,17 @@ using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 //********************************************************************************************************************
 [System.Serializable]
-public class SceneSwitcherSettings : ScriptableObject
+public class EzSceneSwitchSettings : ScriptableObject
 {
     public List<string> scenePaths = new();
 }
 
 public class EzSceneSwitch : EditorWindow
 {
-    private SceneSwitcherSettings settings;
+    private EzSceneSwitchSettings settings;
     private ReorderableList reorderableList;
+    private Vector2 scrollPosition;
 
-    // Add a menu item to open the window
     [MenuItem("Tools/Ez Scene Switch")]
     public static void ShowWindow()
     {
@@ -43,11 +43,11 @@ public class EzSceneSwitch : EditorWindow
 
     private void LoadSettings()
     {
-        settings = AssetDatabase.LoadAssetAtPath<SceneSwitcherSettings>("Assets/Editor/SceneSwitcherSettings.asset");
+        settings = AssetDatabase.LoadAssetAtPath<EzSceneSwitchSettings>("Assets/Editor/EzSceneSwitchSettings.asset");
         if (settings == null)
         {
-            settings = CreateInstance<SceneSwitcherSettings>();
-            AssetDatabase.CreateAsset(settings, "Assets/Editor/SceneSwitcherSettings.asset");
+            settings = CreateInstance<EzSceneSwitchSettings>();
+            AssetDatabase.CreateAsset(settings, "Assets/Editor/EzSceneSwitchSettings.asset");
             AssetDatabase.SaveAssets();
         }
     }
@@ -65,20 +65,26 @@ public class EzSceneSwitch : EditorWindow
             {
                 string path = settings.scenePaths[index];
                 string sceneName = System.IO.Path.GetFileNameWithoutExtension(path);
+                Texture2D sceneIcon = AssetPreview.GetMiniThumbnail(AssetDatabase.LoadAssetAtPath<SceneAsset>(path));
 
                 rect.y += 2;
                 rect.height = EditorGUIUtility.singleLineHeight;
 
-                EditorGUI.LabelField(new Rect(rect.x, rect.y, rect.width - 120, rect.height), sceneName);
+                if (sceneIcon != null)
+                {
+                    GUI.DrawTexture(new Rect(rect.x, rect.y, rect.height, rect.height), sceneIcon);
+                }
 
-            // Load Scene button (additive)
-            if (GUI.Button(new Rect(rect.x + rect.width - 120, rect.y, 60, rect.height), "Load", EditorStyles.miniButton))
+                EditorGUI.LabelField(new Rect(rect.x + rect.height + 5, rect.y, rect.width - 130, rect.height), sceneName);
+
+                // Load Scene button (additive)
+                if (GUI.Button(new Rect(rect.x + rect.width - 130, rect.y, 60, rect.height), "Load", EditorStyles.miniButtonLeft))
                 {
                     LoadSceneAdditive(path);
                 }
 
-            // Unload button
-            if (GUI.Button(new Rect(rect.x + rect.width - 60, rect.y, 60, rect.height), "Unload", EditorStyles.miniButton))
+                // Unload Scene button
+                if (GUI.Button(new Rect(rect.x + rect.width - 70, rect.y, 60, rect.height), "Unload", EditorStyles.miniButtonRight))
                 {
                     UnloadScene(sceneName);
                 }
@@ -88,14 +94,20 @@ public class EzSceneSwitch : EditorWindow
 
     private void OnGUI()
     {
-        // Add some padding and a background color
         GUILayout.Space(10);
         GUILayout.BeginVertical("box");
+
+        // Limit the height of the list area to around 4 scenes
+        scrollPosition = GUILayout.BeginScrollView(scrollPosition, GUILayout.Height(EditorGUIUtility.singleLineHeight * 5 + 10));
 
         // Draw the reorderable list
         reorderableList.DoLayoutList();
 
-        // Use EditorGUILayout for buttons to ensure proper layout handling
+        GUILayout.EndScrollView();
+
+        GUILayout.Space(10);
+
+        // Buttons at the bottom of the list
         if (GUILayout.Button("Add Current Scene", GUILayout.Height(30)))
         {
             AddCurrentScene();
@@ -146,8 +158,7 @@ public class EzSceneSwitch : EditorWindow
         if (!settings.scenePaths.Contains(activeScenePath))
         {
             settings.scenePaths.Add(activeScenePath);
-            EditorUtility.SetDirty(settings);
-            AssetDatabase.SaveAssets();
+            SaveSettings();
         }
         else
         {
@@ -160,8 +171,14 @@ public class EzSceneSwitch : EditorWindow
         if (EditorUtility.DisplayDialog("Clear Scene List", "Are you sure you want to clear the scene list?", "Yes", "No"))
         {
             settings.scenePaths.Clear();
-            EditorUtility.SetDirty(settings);
-            AssetDatabase.SaveAssets();
+            SaveSettings();
         }
+    }
+
+    private void SaveSettings()
+    {
+        EditorUtility.SetDirty(settings);
+        AssetDatabase.SaveAssets();
+        Repaint();
     }
 }
